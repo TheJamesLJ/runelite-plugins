@@ -53,7 +53,9 @@ public class ToxicNpcsPlugin extends Plugin
 		Actor actor = e.getActor();
 		if(actor instanceof Player)
 		{
-			addPlayerDeathMessage(actor);
+			if(config.toxicNPCShowDeathNotification()){
+				addPlayerDeathMessage(actor);
+			}
 			makeNPCsToxic();
 		}
 	}
@@ -83,17 +85,16 @@ public class ToxicNpcsPlugin extends Plugin
 	}
 
 	private void makeNPCsToxic() {
+		int iterator = 0;
 		for(final NPC npc : client.getNpcs()) {
 			if(IgnoreNpc.ignoreNpc(Text.escapeJagex(MoreObjects.firstNonNull(npc.getName(), "")))) {
 				continue;
 			}
 
 			UniqueNpc uniqueNpc = UniqueNpc.getUniqueDialogByNpcID((npc.getId()));
-
 			if (uniqueNpc == null) {
 				uniqueNpc = UniqueNpc.getUniqueDialogByNpcName(Text.escapeJagex(MoreObjects.firstNonNull(npc.getName(), "")));
 			}
-
 			if(uniqueNpc == null) {
 				uniqueNpc = UniqueNpc.getUniqueDialogByNpcName(Text.escapeJagex(MoreObjects.firstNonNull("NO_UNIQUE_DIALOG", "")));
 			}
@@ -103,8 +104,13 @@ public class ToxicNpcsPlugin extends Plugin
 				if (dialogues != null) {
 					int roll = (int) Math.floor(Math.random() * dialogues.length);
 					npc.setOverheadText(dialogues[roll]);
-					npc.setOverheadCycle(400);
+					npc.setOverheadCycle(config.toxicNPCOverheadTextDuration());
 				}
+			}
+
+			iterator++;
+			if(iterator >= config.toxicNPCMaximum()) {
+				break;
 			}
 		}
 	}
