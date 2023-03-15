@@ -39,7 +39,6 @@ import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.Text;
@@ -60,27 +59,6 @@ public class ToxicNpcsPlugin extends Plugin
 	@Inject
 	private ChatMessageManager chatMessageManager;
 
-	@Override
-	protected void startUp() throws Exception
-	{
-
-	}
-
-	@Override
-	protected void shutDown() throws Exception
-	{
-
-	}
-
-	@Subscribe
-	public void onConfigChanged(final ConfigChanged event) {
-		if(event.getKey().equals("toxicNPCDebug")) {
-			if(config.toxicNPCDebug()) {
-				makeNPCsToxic();
-			}
-		}
-	}
-
 	@Subscribe
 	public void onActorDeath(ActorDeath e) {
 		Actor actor = e.getActor();
@@ -99,27 +77,9 @@ public class ToxicNpcsPlugin extends Plugin
 	}
 
 	private void addPlayerDeathMessage(Actor actor) {
-		if(actor.equals(client.getLocalPlayer())) {
-			//Do nothing
-		} else if(isActorFriend(actor)) {
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Your friend " + actor.getName() + " has died", null);
-		} else {
+		if(!actor.equals(client.getLocalPlayer())) {
 			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Player " + actor.getName() + " has died", null);
 		}
-	}
-
-	private boolean isActorFriend(Actor a) {
-		boolean isFriend = false;
-
-		Friend friends[] = client.getFriendContainer().getMembers();
-
-		for (int x = 0; x != friends.length; x++) {
-			if(a.getName() == friends[x].getName()) {
-				isFriend = true;
-			}
-		}
-
-		return isFriend;
 	}
 
 	private void makeNPCsToxic() {

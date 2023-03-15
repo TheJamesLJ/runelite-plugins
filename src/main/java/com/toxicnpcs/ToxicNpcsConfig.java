@@ -56,15 +56,4 @@ public interface ToxicNpcsConfig extends Config
 		return 10;
 	}
 
-	@ConfigItem(
-			keyName = "toxicNPCDebug",
-			name = "Toxic NPC Debug",
-			description = "Debug testing for toxic npcs, check to trigger toxic npc message",
-			position = 5
-	)
-	default boolean toxicNPCDebug()
-	{
-		return false;
-	}
-
 }
